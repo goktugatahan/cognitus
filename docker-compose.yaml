@@ -1,0 +1,63 @@
+version: "3.5"
+
+services:
+  postgres:
+    image: postgres
+    env_file:
+      - ./db.env
+    environment:
+      PGDATA: /data/postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - postgre_volume:/data/postgres
+    restart: unless-stopped
+
+  redis:
+    image: redis
+    volumes:
+      - redis_volume:/data/redis
+    restart: always
+
+  webapp:
+    image: webapp
+    env_file:
+      - ./db.env
+    command: sh -c "python manage.py collectstatic --noinput & python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - static:/web/static
+    restart: unless-stopped
+
+  dataapp:
+    image: dataapp
+    env_file:
+      - ./db.env
+    command: sh -c "uvicorn main:app --port 8081 --host 0.0.0.0 --reload"
+    volumes:
+      - dataapp_volume:/dataapp/trained_models
+    restart: unless-stopped
+
+  celeryapp:
+    image: dataapp
+    env_file:
+      - ./db.env
+    command: sh -c "celery -A tasks.app worker"
+    volumes:
+      - dataapp_volume:/dataapp/trained_models
+    restart: unless-stopped
+
+  proxy:
+    image: proxy
+    ports:
+      - 80:80
+    depends_on:
+      - webapp
+    volumes:
+      - static:/web/static/
+    restart: unless-stopped
+
+volumes:
+  postgre_volume:
+  redis_volume:
+  dataapp_volume:
+  static:
