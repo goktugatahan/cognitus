@@ -32,7 +32,7 @@ services:
     image: dataapp
     env_file:
       - ./db.env
-    command: sh -c "uvicorn main:app --port 8081 --host 0.0.0.0 --reload"
+    command: sh -c "gunicorn main:app -b 0.0.0.0:8081 --workers 4 --worker-class uvicorn.workers.UvicornWorker"
     volumes:
       - dataapp_volume:/dataapp/trained_models
     restart: unless-stopped
