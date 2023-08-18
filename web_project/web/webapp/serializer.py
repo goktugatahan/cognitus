@@ -5,6 +5,9 @@ class DatasSerializer(serializers.Serializer):
     text = serializers.CharField()
     label = serializers.CharField()
 
+    def create(self,validated_data):
+        return Data.objects.create(**validated_data)
+
     def validate_label(self, label):
         if label is None:
             raise serializers.ValidationError("Label is None")
@@ -23,6 +26,9 @@ class DataSerializer(serializers.Serializer):
 
     text = serializers.CharField()
     label = serializers.CharField()
+
+    def create(self,validated_data):
+        return Data.objects.create(**validated_data)
 
     def validate_label(self, label):
         if label is None:
@@ -43,6 +49,9 @@ class DataTrainSerializer(serializers.Serializer):
     text = serializers.CharField()
     label = serializers.CharField()
 
+    def create(self,validated_data):
+        return Data.objects.create(**validated_data)
+
     def validate_label(self, label):
         if label is None:
             raise serializers.ValidationError("Label is None")
@@ -61,6 +70,9 @@ class DataPredictSerializer(serializers.Serializer):
 
     text = serializers.CharField()
     label = serializers.CharField()
+
+    def create(self,validated_data):
+        return Data.objects.create(**validated_data)
 
     def validate_label(self, label):
         if label is None:
